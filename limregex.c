@@ -444,7 +444,7 @@ static int regexpPostNfa(struct FAdelta nfaDelta[], unsigned int nfaDeltaSize, u
 /*  Index moves of different prev state
  *  in sorted array of pointers that point to NFA moves.
  */
-void indexNfaDeltas(struct FAdelta **nfaDeltaRef, int nfaDeltaLen, struct FAdelta **index[], int indexSize){
+static void indexNfaDeltas(struct FAdelta **nfaDeltaRef, int nfaDeltaLen, struct FAdelta **index[], int indexSize){
     int i = 0;
     index[i] = nfaDeltaRef + i;
     while(i<nfaDeltaLen && nfaDeltaRef[i]->input == EXTRACT_FLAG)i++;
@@ -458,7 +458,7 @@ void indexNfaDeltas(struct FAdelta **nfaDeltaRef, int nfaDeltaLen, struct FAdelt
         = nfaDeltaRef + i;
 }
 
-void indexDfaDeltas(struct FAdelta **dfaDeltaRef, int dfaDeltaLen, struct FAdelta **index[], int indexSize){
+static void indexDfaDeltas(struct FAdelta **dfaDeltaRef, int dfaDeltaLen, struct FAdelta **index[], int indexSize){
     int i = 0;
     while(dfaDeltaRef[i]->input == EXTRACT_FLAG)i++;
     index[dfaDeltaRef[i]->before] = dfaDeltaRef + i;
@@ -470,7 +470,7 @@ void indexDfaDeltas(struct FAdelta **dfaDeltaRef, int dfaDeltaLen, struct FAdelt
         = dfaDeltaRef + dfaDeltaLen;
 }
 
-int isCharType(int metachar, char c){
+static int isCharType(int metachar, char c){
     if(metachar & METACHAR){
         switch(metachar & 0xff){
             case '.': return 1;
@@ -488,7 +488,7 @@ int isCharType(int metachar, char c){
 /*  Find subset name by set elements.
  *  @return int Subset index
  */
-int sub_findSubset(int *dfaLabel[], int dfaLabelSize, int newSubset[], int newSubsetSize){
+static int sub_findSubset(int *dfaLabel[], int dfaLabelSize, int newSubset[], int newSubsetSize){
     for(int label = 0; label<dfaLabelSize; label++){
         if((dfaLabel[label+1] - dfaLabel[label]) != newSubsetSize)
             continue;
@@ -502,7 +502,7 @@ int sub_findSubset(int *dfaLabel[], int dfaLabelSize, int newSubset[], int newSu
  *  nfa state label as an subset element.
  *  Search start from dfaN to dfaLabelLen.
  */
-int nfaLabelDfaLabel(int nfaLabel, int dfaN, int *dfaLabel[], int dfaLabelLen){
+static int nfaLabelDfaLabel(int nfaLabel, int dfaN, int *dfaLabel[], int dfaLabelLen){
     for(int ld = dfaN; ld < dfaLabelLen; ld++){
         for(int ln = 0; dfaLabel[ld] + ln < dfaLabel[ld+1]; ln++)
             if(dfaLabel[ld][ln] == nfaLabel)return ld;
@@ -518,7 +518,7 @@ int nfaLabelDfaLabel(int nfaLabel, int dfaN, int *dfaLabel[], int dfaLabelLen){
  *                  pointers array of pointers of NFA moves.
  *  @return int Size of inserted subsets.
  */
-int sub_afterSubset(int *index, struct FAdelta *nfaDelta[], int nfaDeltaSize, int *dfaLabel[], int *labelSize){
+static int sub_afterSubset(int *index, struct FAdelta *nfaDelta[], int nfaDeltaSize, int *dfaLabel[], int *labelSize){
     /*  newSubsetSize:            |<-       ->|
      *  subset:   |1|2|3|4|5|6|7|8| | | | | | | | | | | | | |
      *  dfaLabel   0 1   2 3 ..... ^labelSize  ^newSize
@@ -558,7 +558,7 @@ int sub_afterSubset(int *index, struct FAdelta *nfaDelta[], int nfaDeltaSize, in
 /*  qsort() NFA moves compare function for sub_insDfaDelta()
  *  Order by input desc, next state asc.
  */
-int nfaCmpInput(const void *ap, const void *bp){
+static int nfaCmpInput(const void *ap, const void *bp){
     const struct FAdelta *a = *(struct FAdelta **)ap;
     const struct FAdelta *b = *(struct FAdelta **)bp;
     return(b->input - a->input)?(b->input - a->input):(a->after-b->after);
@@ -566,7 +566,7 @@ int nfaCmpInput(const void *ap, const void *bp){
 
 /*  Add next state for active(incomplete) DFA state(subset).
  */
-void sub_insDfaDelta(int label, int *dfaLabel[], int *labelSize, struct FAdelta **nfaDeltaIndex[], int nfaDeltaIndexLen, struct FAdelta **newDfaDelta, int labelStates[]){
+static void sub_insDfaDelta(int label, int *dfaLabel[], int *labelSize, struct FAdelta **nfaDeltaIndex[], int nfaDeltaIndexLen, struct FAdelta **newDfaDelta, int labelStates[]){
     /*  prepare */
     int nfaSubsetSize = 0;
     int subsetEl[nfaDeltaIndexLen];
@@ -632,7 +632,7 @@ void sub_insDfaDelta(int label, int *dfaLabel[], int *labelSize, struct FAdelta 
 
 /*  TODO:   Implement submatch extraction.
  */
-void regexpExtructIndex(int indexb[], int indexa[], int *dfaLabel[], int dfaLabelLen, struct FAdelta **nfaDeltaIndex[]){
+static void regexpExtructIndex(int indexb[], int indexa[], int *dfaLabel[], int dfaLabelLen, struct FAdelta **nfaDeltaIndex[]){
     for(int dlabel = 0; dlabel<dfaLabelLen; dlabel++){
         indexa[dlabel] = 0;
         indexb[dlabel] = 0;
@@ -650,7 +650,7 @@ void regexpExtructIndex(int indexb[], int indexa[], int *dfaLabel[], int dfaLabe
 /*  Convert NFA to DFA.
  *  @return int Number of moves in dfaDelta[]
  */
-int regexpNfaDfa(struct FAdelta **nfaDeltaIndex[], int nfaDeltaIndexLen, struct FAdelta dfaDelta[], int dfaDeltaLen, int subsetLabelStates[], int extructIndexa[], int extructIndexb[]){
+static int regexpNfaDfa(struct FAdelta **nfaDeltaIndex[], int nfaDeltaIndexLen, struct FAdelta dfaDelta[], int dfaDeltaLen, int subsetLabelStates[], int extructIndexa[], int extructIndexb[]){
     /*  XXX: appropriate subsetSize */
     int subsetSize = nfaDeltaIndex[nfaDeltaIndexLen]-nfaDeltaIndex[1];
     int subsetElements[subsetSize];
@@ -677,7 +677,7 @@ int regexpNfaDfa(struct FAdelta **nfaDeltaIndex[], int nfaDeltaIndexLen, struct 
 
 /*  Compile DFA to VM instructions.
  */
-int regexpDfaCl(struct FAdelta **dfaDeltaIndex[], int dfaDeltaIndexLen, int dfaLabelState[], unsigned int instr[], int instrLen){
+static int regexpDfaCl(struct FAdelta **dfaDeltaIndex[], int dfaDeltaIndexLen, int dfaLabelState[], unsigned int instr[], int instrLen){
     int dfaDeltaLen = dfaDeltaIndex[dfaDeltaIndexLen] - dfaDeltaIndex[0];
     struct FAdelta **deltaRef = dfaDeltaIndex[0];
     int labelAddr[dfaDeltaIndexLen+1];
