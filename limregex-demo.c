@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 X. ZHANG <201560039.uibe.edu.cn>
+ * Copyright (C) 2015 ZHANG X. <201560039.uibe.edu.cn>
  * Released under the MIT licence, see bottom of file.
  */
 
