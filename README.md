@@ -1,6 +1,7 @@
 # limregex
-A DFA-based regular expression prototype implementation  
-    -----**WITHOUT submatch extraction**.  
+A C Programming Exercise,
+DFA-based regular expression implementation
+WITHOUT submatch extraction.  
   
 Supports only * | ( ) ? . \d \D \w \W \s \S.  
 Support backslash"\" and "\xHH" escapes.  
