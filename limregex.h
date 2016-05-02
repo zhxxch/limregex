@@ -43,13 +43,13 @@
  *          RegExp string
  *  Output: Number of RegExp VM instructions
  */
-int limregexcl( unsigned int[], int,    const char[]    );
+int limregexcl( int[], int,    const char[]    );
 
 /*  Execute a compiled RegExp.
  *  Input:  String,
  *          Array of instructions
  *  Output: Match Length
  */
-int limregexec( const char[],   unsigned int[]  );
+int limregexec( const char[],   int[]   );
 
 #endif

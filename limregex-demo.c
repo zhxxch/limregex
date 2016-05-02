@@ -10,47 +10,59 @@
 
 char re0[]  =   "hs|(s|hh)s*h";
 char str0[] =   "sssssh";
+int match_len;
+int mem_len;
+int code_len;
+int *regexp_code;
 
 int main(int argc, char *argv[]){
-    if(argc>2){
-        int match_len;
-        char res[strlen(argv[2])];
-        int code_len = strlen(argv[1]) * 10;
-        unsigned int *regexp_code
-            = malloc((size_t)(code_len * sizeof(unsigned int)));
+    if(argc>1){
+        mem_len = strlen(argv[1]) * 10;
+        code_len = 0;
+        regexp_code = malloc((size_t)(mem_len * sizeof(int)));
         if(regexp_code){
             /*  compile */
-            while(limregexcl(regexp_code, code_len, argv[1])<0){
-                code_len *= 2;
-                unsigned int *new_re_code
+            while((code_len = limregexcl(regexp_code, mem_len, argv[1]))<0){
+                mem_len *= 2;
+                int *new_re_code
                     = realloc(regexp_code,
-                            code_len * sizeof(unsigned int));
+                            mem_len * sizeof(int));
                 if(new_re_code != regexp_code){
                     free(regexp_code);
                     regexp_code = new_re_code;
                 }
             }
         }
+        printf("{");
+        for(int n=0; n<code_len; n++)
+            if(regexp_code[n]<='N'
+                    && regexp_code[n]>='A')
+                printf("'%c', ", regexp_code[n]); 
+            else
+                printf("0x%x, ", regexp_code[n]); 
+        printf("}\n");
+    }else{
+        printf("Usage: limregex-demo regexp string\n"
+                "Regular expression: %s\n"
+                "String: %s\n", re0, str0);
+
+        int match, code[50];
+        /*  compile */
+        limregexcl(code, 50, re0);
         /*  match   */
+        match = limregexec(str0, code);
+
+        printf("Match Length: %d\n", match);
+    }
+    if(argc>2){
+        /*  match   */
+        char res[strlen(argv[2])];
         if((match_len = limregexec(argv[2], regexp_code)) > 0){
             snprintf(res, match_len+1, "%s", argv[2]);
             printf("Matched \"%s\".\n", res);
         }else{
             printf("String doesn't match.\n");
         }
-        free(regexp_code);
-    }else{
-        printf("Usage: limregex-demo regexp string\n"
-                "Regular expression: %s\n"
-                "String: %s\n", re0, str0);
-        
-        unsigned int match, code[50];
-        /*  compile */
-        limregexcl(code, 50, re0);
-        /*  match   */
-        match = limregexec(str0, code);
-        
-        printf("Match Length: %d\n", match);
     }
     return EXIT_SUCCESS;
 }
