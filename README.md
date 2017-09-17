@@ -1,18 +1,16 @@
 # limregex
-A C Programming Exercise,
+A C programming exercise,
 DFA-based regular expression implementation
-WITHOUT submatch extraction.  
-  
-Supports only * | ( ) ? . \d \D \w \W \s \S.  
-Support backslash"\" and "\xHH" escapes.  
-Support UTF-8 and could be configured to support other encodings.  
+
+Supports only * | ( ) ? . \d \D \w \W \s \S.
+With backslash and "\xHH" escapes and UTF-8. 
   
 **NO support for + ,**  
-     + and \+ both will match character '+'.  
+     + and \+ both match character '+'.  
 **NO support for character classes,**  
-     '[', ']' will be regarded as normal character.  
+     '[', ']' will be characters to match.  
 **NO support for counted repetition,**  
-     '{', '}' will be regarded as normal character.  
+     '{', '}' will be characters to match.  
 **NO support for backreference.**  
 
 ## Demo:
@@ -22,4 +20,4 @@ Support UTF-8 and could be configured to support other encodings.
         /*  match   */
         match_length = limregexec("sssssh", code);
 
-TODO: submatch extraction  
+TODO: fix bugs, refactor all codes 
